@@ -1,75 +1,35 @@
-# React + TypeScript + Vite
+# Proffy Web 2026 — Fluxo de Cadastro e Perfil do Professor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Implementação do fluxo completo de **Dar aulas** (Formulário de Cadastro do Professor, Confirmação de Cadastro e Meu Perfil) na aplicação Proffy Web.
 
-Currently, two official plugins are available:
+## 🚀 Como rodar o projeto localmente
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Clone o repositório:
+   `git clone https://github.com/SEU-USUARIO/proffy-web-2026.git`
 
-## React Compiler
+2. Acesse a pasta do projeto:
+   `cd proffy-web-2026`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Instale as dependências:
+   `npm install`
 
-## Expanding the ESLint configuration
+4. Inicie o servidor de desenvolvimento:
+   `npm run dev`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+5. Acesse no navegador o endereço exibido no terminal (por padrão `http://localhost:5173`).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🧭 Rotas e Telas Implementadas
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Rota | Componente | Descrição |
+| :--- | :--- | :--- |
+| `/` | `Home` | Tela inicial com botão **Dar aula** direcionando para `/give-classes`. |
+| `/give-classes` | `TeacherForms` | Formulário de cadastro de professores com validação via Zod, máscara de WhatsApp, limite de 300 caracteres na biografia e lista dinâmica de horários disponíveis. |
+| `/give-classes/register-completed` | `TeacherFormsCompleted` | Tela de confirmação ("Cadastro salvo!") com botão **Acessar lista** redirecionando para `/profile`. |
+| `/profile` | `TeacherProfile` | Tela **Meu perfil** refletindo os dados cadastrados (nome, matéria, e-mail, WhatsApp, biografia, custo da hora-aula e horários disponíveis), permitindo adicionar e excluir horários. |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🛠️ Decisões Técnicas Relevantes
 
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- **React Hook Form + Zod (`zodResolver`):** Validação declarativa e centralizada de todos os campos obrigatórios, garantindo formato válido de WhatsApp, limite de 300 caracteres na biografia, conversão numérica de custo (`z.coerce.number().positive()`) e validação cruzada de horários (`.refine()` assegurando que o horário final seja posterior ao inicial).
+- **Horários Dinâmicos (`useFieldArray`):** Adição e remoção dinâmica de horários disponíveis sem duplicação de estado.
+- **Persistência entre Telas (`localStorage`):** Utilitário `src/utils/teacher-storage.ts` criado para persistir os dados informados no formulário `/give-classes` e carregá-los automaticamente na tela `/profile`.
+- **Componentização:** Reaproveitamento integral dos componentes `InputCustom`, `Select`, `TextArea` e `Finally` mantendo o padrão visual com Tailwind CSS.
